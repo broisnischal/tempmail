@@ -63,8 +63,7 @@ func (s *Session) Data(r io.Reader) error {
 		s.backend.emails[recipient] = append(s.backend.emails[recipient], email)
 	}
 
-	println("Email sent to ", s.to) // Debug log
-
+	println("Email sent to:", s.to) // Debug log
 	return nil
 }
 
