@@ -43,7 +43,6 @@ func (s *Session) Mail(from string, opts *smtp.MailOptions) error {
 }
 
 func (s *Session) Rcpt(to string, opts *smtp.RcptOptions) error {
-	// Check if the domain is "snehaa.store"
 	if strings.HasSuffix(to, "@snehaa.store") {
 		s.to = append(s.to, to)
 		return nil
@@ -58,13 +57,14 @@ func (s *Session) Data(r io.Reader) error {
 		email := &Email{
 			From:    s.from,
 			To:      recipient,
-			Subject: "Temp Subject",
+			Subject: "Temp Subject", // Parse properly in real code
 			Body:    string(body),
 		}
 		s.backend.emails[recipient] = append(s.backend.emails[recipient], email)
 	}
 
-	println("Email sent to ", s.to)
+	println("Email sent to ", s.to) // Debug log
+
 	return nil
 }
 
@@ -107,11 +107,16 @@ func api() {
 
 	// Get emails for an address
 	router.GET("/inbox/:email", func(c *gin.Context) {
-		email := c.Param("email")
-		// Fetch emails from the database (replace "backend.emails" with your DB)
-		emails := backend.emails[email]
+		email := strings.ToLower(c.Param("email"))
+		emails, exists := backend.emails[email] // Check if emails exist
+		if !exists {
+			c.JSON(200, []Email{}) // Return empty array if no emails
+			return
+		}
 		c.JSON(200, emails)
 	})
+
+	// Serve the HTML file
 	// Add to main() in api.go:
 	// router.LoadHTMLGlob("templates/*")
 	// router.GET("/", func(c *gin.Context) {
