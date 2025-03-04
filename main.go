@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/mail"
 	"os"
 	"strings"
@@ -59,6 +58,7 @@ func (s *Session) Rcpt(to string, opts *smtp.RcptOptions) error {
 		s.to = append(s.to, to)
 		return nil
 	}
+
 	return smtp.ErrAuthRequired
 }
 
@@ -156,7 +156,7 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		println("Error loading .env file")
 	}
 
 	// Initialize Redis client

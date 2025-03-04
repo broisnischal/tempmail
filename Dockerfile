@@ -14,4 +14,9 @@ COPY --from=builder /app/tempmail .
 EXPOSE 25 8080
 RUN adduser -D tempmail
 USER tempmail
+
+COPY .env .
+
+HEALTHCHECK --interval=5s --timeout=5s CMD curl -f http://localhost:8080/health || exit 1
+
 CMD ["./tempmail"]
