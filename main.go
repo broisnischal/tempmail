@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/mail"
 	"os"
 	"strings"
@@ -14,6 +15,7 @@ import (
 	"github.com/emersion/go-smtp"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -151,11 +153,19 @@ func startCleanup(rdb *redis.Client) {
 }
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// Initialize Redis client
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", getEnv("REDIS_HOST", "redis"), getEnv("REDIS_PORT", "6379")),
-		Password: "",
-		DB:       0,
+		Addr:         fmt.Sprintf("%s:%s", getEnv("REDIS_HOST", "redis"), getEnv("REDIS_PORT", "6379")),
+		Password:     getEnv("REDIS_PASSWORD", ""),
+		DB:           0,
+		PoolSize:     10,
+		MinIdleConns: 5,
 	})
 
 	// Start cleanup job
