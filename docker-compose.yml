@@ -11,10 +11,8 @@ services:
     ports:
       - "8989:8989"
       - "25:25"
-    # depends_on:
-    #   - redis
     env_file:
-      - .env
+      - ./.env
 
   # redis:
   #   image: redis:latest
